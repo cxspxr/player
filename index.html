@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Player</title>
+	<script src='js/vendors/vue-dev.js'></script>
+</head>
+<body>
+	<div id="app">
+		<upload></upload>
+		<video controls v-bind:src="source.data"></video>
+	</div>
+
+	<template id='input-template'>
+		<input type="file" v-on:change="buildSource">
+	</template>
+
+	<script src="js/bundle.js"></script>
+</body>
+</html>
