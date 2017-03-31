@@ -15,7 +15,8 @@ gulp.task("reload-page", function() {
 });
 
 gulp.task("coffee", function() {
-	return gulp.src(['./coffee/**/!(app).coffee','./coffee/init/app.coffee'], { sourcemaps: true })
+	return gulp.src(['./coffee/**/!(app|grammar|control).coffee','./coffee/init/app.coffee',
+		'./coffee/speech/recognition/grammar.coffee', './coffee/speech/recognition/control.coffee'], { sourcemaps: true })
 	  .pipe(coffee({ bare: true }))
 	  .pipe(concat("bundle.js"))
 	  .pipe(gulp.dest('./js/'));
