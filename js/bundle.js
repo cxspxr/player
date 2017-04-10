@@ -7,10 +7,15 @@ source = {
 Vue.component('upload', {
   template: '#input-template',
   methods: {
-    buildSource: function() {
-      return source.data = URL.createObjectURL(this.$el.files[0]);
+    buildOuterSource: function() {
+      return source.data = this.$el.value;
     }
   }
+
+  /*
+  		buildSource: () ->	
+  			source.data = URL.createObjectURL this.$el.files[0]
+   */
 });
 
 
@@ -21,53 +26,52 @@ app = new Vue({
   el: "#app",
   data: {
     source: source,
-    play: false,
-    player: document.querySelector('video')
+    play: false
   },
   methods: {
-    updatePlayer: (function(_this) {
-      return function() {
-        return app.player = document.querySelector('video');
-      };
-    })(this),
-    louder: (function(_this) {
-      return function() {
-        app.updatePlayer();
-        if (app.player.volume + 0.1 <= 1) {
-          return app.player.volume += .1;
-        } else {
-          return app.player.volume = 1;
-        }
-      };
-    })(this),
-    quiter: (function(_this) {
-      return function() {
-        app.updatePlayer();
-        if (app.player.volume - 0.1 >= 0) {
-          return app.player.volume -= .1;
-        } else {
-          return app.player.volume = 0;
-        }
-      };
-    })(this)
+    louder: function() {
+      if (this.player.volume + 0.1 <= 1) {
+        return this.player.volume += 0.1;
+      } else {
+        return this.player.volume = 1;
+      }
+    },
+    quiter: function() {
+      if (this.player.volume - 0.1 >= 0) {
+        return this.player.volume -= 0.1;
+      } else {
+        return this.player.volume = 0;
+      }
+    },
+    toggleSound: function() {
+      return this.player.muted = !this.player.muted;
+    },
+    slower: function() {
+      if (this.player.playbackRate - 0.2 >= 0.5) {
+        return this.player.playbackRate -= 0.2;
+      } else {
+        return this.player.playbackRate = 0.5;
+      }
+    },
+    faster: function() {
+      return this.player.playbackRate += 0.2;
+    }
+  },
+  computed: {
+    player: function() {
+      return document.querySelector('video');
+    }
   },
   watch: {
-    play: (function(_this) {
-      return function(v) {
-        app.updatePlayer();
-        if (v) {
-          return app.player.play();
-        } else {
-          return app.player.pause();
-        }
-      };
-    })(this),
-    volume: (function(_this) {
-      return function(v) {};
-    })(this)
+    play: function(v) {
+      if (v) {
+        return this.player.play();
+      } else {
+        return this.player.pause();
+      }
+    }
   }
 });
-
 
 var grammar, vocabulary, words;
 
@@ -79,7 +83,10 @@ vocabulary = {
   'play': ["игра", "ыгра", "игр", "игор"],
   'stop': ["100", "сто", "что", "топ", "кто"],
   'louder': ["громче", "гром"],
-  'quiter': ["тише", "пиши", "тыщ"]
+  'quiter': ["тише", "пиши", "тыщ"],
+  'toggleSound': ["звук"],
+  'slower': ['медленнее'],
+  'faster': ['быстрее']
 };
 
 var SpeechGrammarList, SpeechRecognition, SpeechRecognitionEvent, recognition, speechList;
@@ -99,6 +106,7 @@ speechList.addFromString(grammar);
 recognition.grammars = speechList;
 
 recognition.lang = 'ru-RU';
+
 
 /*
 recognition.addEventListener "speechend", () => recognition.stop()
@@ -136,12 +144,29 @@ recognition.addEventListener("result", (function(_this) {
       });
     }
     if (app.player.volume > 0) {
-      return vocabulary.quiter.forEach(function(word) {
+      vocabulary.quiter.forEach(function(word) {
         if (result.indexOf(word) !== -1) {
           return app.quiter();
         }
       });
     }
+    vocabulary.toggleSound.forEach(function(word) {
+      if (result.indexOf(word) !== -1) {
+        return app.toggleSound();
+      }
+    });
+    if (!(app.player.playbackRate <= 0.5)) {
+      vocabulary.slower.forEach(function(word) {
+        if (result.indexOf(word) !== -1) {
+          return app.slower();
+        }
+      });
+    }
+    return vocabulary.faster.forEach(function(word) {
+      if (result.indexOf(word) !== -1) {
+        return app.faster();
+      }
+    });
 
     /* 
     		if app.volume != 0
