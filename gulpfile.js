@@ -16,13 +16,12 @@ gulp.task("reload-page", function() {
 
 gulp.task("coffee", function() {
 	return gulp.src([
-		'./coffee/speech/recognition/grammar.coffee', 
 		'./coffee/speech/recognition/Recognee.coffee',
 		'./coffee/init/data.coffee',
 		'./coffee/init/upload.coffee',
 		'./coffee/init/app.coffee', 
 		'./coffee/init/recognizer.coffee',
-		'./coffee/**/!(app|grammar|Recognee|recognizer|data|upload).coffee'], 
+		'./coffee/**/!(app|Recognee|recognizer|data|upload).coffee'], 
 		{ sourcemaps: true })
 	  .pipe(coffee({ bare: true }))
 	  .pipe(concat("bundle.js"))
