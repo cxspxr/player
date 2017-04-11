@@ -12,8 +12,10 @@
 	</div>
 
 	<template id='input-template'>
-		<!--<input type="file" v-on:change="buildSource">-->
-		<input type="text" v-on:change="buildOuterSource">
+		<div>
+			<input type="file" v-on:change="buildSource">
+			<input type="text" v-on:change="buildOuterSource">
+		</div>
 	</template>
 
 	<script src="js/bundle.js"></script>
