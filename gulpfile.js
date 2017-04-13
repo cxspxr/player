@@ -18,10 +18,14 @@ gulp.task("coffee", function() {
 	return gulp.src([
 		'./coffee/speech/recognition/Recognee.coffee',
 		'./coffee/init/data.coffee',
-		'./coffee/init/upload.coffee',
+		'./coffee/components/mixins.coffee',
+		'./coffee/components/player.coffee',
+		'./coffee/components/upload.coffee',
+		'./coffee/components/src.coffee',
 		'./coffee/init/app.coffee', 
+		'./coffee/interface/player.coffee',
 		'./coffee/init/recognizer.coffee',
-		'./coffee/**/!(app|Recognee|recognizer|data|upload).coffee'], 
+		'./coffee/**/!(app|Recognee|recognizer|upload|src|player|mixins|data|player).coffee'], 
 		{ sourcemaps: true })
 	  .pipe(coffee({ bare: true }))
 	  .pipe(concat("bundle.js"))

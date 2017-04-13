@@ -6,16 +6,26 @@
 	<script src='js/vendors/vue-dev.js'></script>
 </head>
 <body>
-	<div id="app">
-		<upload></upload>
-		<video controls v-bind:src="source.data" ></video>
+	<div id="app">	
+		<component :is="currentComponent" v-on:finalize='next'></component>	
 	</div>
 
-	<template id='input-template'>
+	<template id='input-template' >
 		<div>
-			<input type="file" v-on:change="buildSource">
-			<input type="text" v-on:change="buildOuterSource">
+			<input type="file" v-on:change="buildSource" v-if='type == "file"'>
+			<input type="text" v-on:change="buildSource" v-else>
 		</div>
+	</template>
+
+	<template id="src-template">
+		<div class="src">
+			<button class="src--choice" v-on:click="setType('link')">Source Link</button>
+			<button class="src--choice" v-on:click="setType('file')">Upload file</button>
+		</div>
+	</template>
+
+	<template id="player-template">
+		<video controls v-bind:src="source"></video>
 	</template>
 
 	<script src="js/bundle.js"></script>

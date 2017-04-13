@@ -54,7 +54,7 @@ Recognee = function(EGHV, language, continuous) {
         }
       });
     } else {
-      if (eval(validations)) {
+      if (validations && validations()) {
         return vocabulary.forEach(function(word) {
           if (result.indexOf(word) !== -1) {
             return handler();
@@ -86,24 +86,68 @@ Recognee = function(EGHV, language, continuous) {
   return this;
 };
 
-var source;
+var data;
 
-source = {
-  data: null
+data = {
+  type: null,
+  source: null
 };
+
+var finalize;
+
+finalize = {
+  methods: {
+    finalize: function() {
+      return null;
+    }
+  }
+};
+
+var player;
+
+player = Vue.component('player', {
+  template: '#player-template',
+  data: function() {
+    return {
+      source: data.source
+    };
+  },
+  mixins: [finalize]
+});
 
 var upload;
 
 upload = Vue.component('upload', {
   template: '#input-template',
+  data: function() {
+    return {
+      type: data.type
+    };
+  },
   methods: {
-    buildOuterSource: function() {
-      return source.data = this.$el.children[1].value;
-    },
     buildSource: function() {
-      return source.data = URL.createObjectURL(this.$el.children[0].files[0]);
+      if (data.type === 'link') {
+        data.source = this.$el.children[0].value;
+      } else {
+        data.source = URL.createObjectURL(this.$el.children[0].files[0]);
+      }
+      return this.$emit('finalize');
     }
-  }
+  },
+  mixins: [finalize]
+});
+
+var src;
+
+src = Vue.component('src', {
+  template: '#src-template',
+  methods: {
+    setType: function(type) {
+      data.type = type;
+      return this.$emit('finalize');
+    }
+  },
+  mixins: [finalize]
 });
 
 var app;
@@ -111,88 +155,116 @@ var app;
 app = new Vue({
   el: "#app",
   data: {
-    source: source
+    chain: [src, upload, player],
+    level: 0,
+    currentComponent: null
   },
   components: {
-    upload: upload
+    player: player,
+    upload: upload,
+    src: src
   },
   methods: {
-    play: function() {
-      return this.player.play();
+    start: function() {
+      return this.currentComponent = this.chain[0];
     },
-    stop: function() {
-      return this.player.pause();
-    },
-    louder: function() {
-      if (this.player.volume + 0.1 <= 1) {
-        return this.player.volume += 0.1;
-      } else {
-        return this.player.volume = 1;
+    next: function() {
+      this.level++;
+      if (this.chain[this.level]) {
+        return this.currentComponent = this.chain[this.level];
       }
-    },
-    quiter: function() {
-      if (this.player.volume - 0.1 >= 0) {
-        return this.player.volume -= 0.1;
-      } else {
-        return this.player.volume = 0;
-      }
-    },
-    toggleSound: function() {
-      return this.player.muted = !this.player.muted;
-    },
-    slower: function() {
-      if (this.player.playbackRate - 0.2 >= 0.5) {
-        return this.player.playbackRate -= 0.2;
-      } else {
-        return this.player.playbackRate = 0.5;
-      }
-    },
-    faster: function() {
-      return this.player.playbackRate += 0.2;
-    }
-  },
-  computed: {
-    player: function() {
-      return document.querySelector('video');
     }
   }
 });
+
+app.start();
+
+var API;
+
+API = {
+  element: function() {
+    return document.querySelector('video');
+  },
+  play: function() {
+    return API.element().play();
+  },
+  stop: function() {
+    return API.element().pause();
+  },
+  louder: function() {
+    if (API.element().volume + 0.1 <= 1) {
+      return API.element().volume += 0.1;
+    } else {
+      return API.element().volume = 1;
+    }
+  },
+  quiter: function() {
+    if (API.element().volume - 0.1 >= 0) {
+      return API.element().volume -= 0.1;
+    } else {
+      return API.element().volume = 0;
+    }
+  },
+  toggleSound: function() {
+    return API.element().muted = !API.element().muted;
+  },
+  slower: function() {
+    if (API.element().playbackRate - 0.2 >= 0.5) {
+      return API.element().playbackRate -= 0.2;
+    } else {
+      return API.element().playbackRate = 0.5;
+    }
+  },
+  faster: function() {
+    return API.element().playbackRate += 0.2;
+  }
+};
 
 var EGHV, recognizer;
 
 EGHV = {
   play: {
     grammar: ["игра", "ыгра", "игр", "игор"],
-    handler: app.play,
-    validation: "app.player.paused"
+    handler: API.play,
+    validation: function() {
+      return API.element().paused;
+    }
   },
   stop: {
     grammar: ["100", "сто", "что", "топ", "кто"],
-    handler: app.stop,
-    validation: "!app.player.paused"
+    handler: API.stop,
+    validation: function() {
+      return !API.element().paused;
+    }
   },
   louder: {
     grammar: ["громче", "гром"],
-    handler: app.louder,
-    validation: "app.player.volume < 1"
+    handler: API.louder,
+    validation: function() {
+      return API.element().volume < 1;
+    }
   },
   quiter: {
     grammar: ["тише", "пиши", "тыщ"],
-    handler: app.quiter,
-    validation: "app.player.volume > 0"
+    handler: API.quiter,
+    validation: function() {
+      return API.element().volume > 0;
+    }
   },
   toggleSound: {
     grammar: ["звук"],
-    handler: app.toggleSound
+    handler: API.toggleSound
   },
   slower: {
     grammar: ['медленнее'],
-    handler: app.slower,
-    validation: "app.player.playbackRate >= 0.6"
+    handler: API.slower,
+    validation: function() {
+      return API.element().playbackRate >= 0.6;
+    }
   },
   faster: {
     grammar: ['быстрее'],
-    hanlder: app.faster
+    hanlder: API.faster
   }
 };
 
