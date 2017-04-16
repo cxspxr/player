@@ -1,7 +1,7 @@
 var Recognee;
 
-Recognee = function(EGHV, language, continuous) {
-  var handle, listen, makeContinuous, recognition, setGrammar, setLanguage, setRecognition;
+Recognee = function(language, continuous) {
+  var EGHV, control, handle, makeContinuous, recognition, setGrammar, setLanguage, setRecognition;
   if (language == null) {
     language = 'ru-RU';
   }
@@ -10,6 +10,7 @@ Recognee = function(EGHV, language, continuous) {
   }
   this.language = language;
   this.continuous = continuous;
+  EGHV = {};
   recognition = null;
   setRecognition = function() {
     var SpeechRecognition, SpeechRecognitionEvent;
@@ -41,21 +42,32 @@ Recognee = function(EGHV, language, continuous) {
       });
     }
   };
-  handle = function(event, vocabulary, handler, recognized, validations) {
+  this.listen = function(event, grammar, handler, validation) {
+    if (validation == null) {
+      validation = void 0;
+    }
+    return EGHV[event] = {
+      grammar: grammar,
+      handler: handler,
+      validation: validation
+    };
+  };
+  control = function(event, grammar, handler, recognized, validations) {
     var result;
     if (validations == null) {
       validations = void 0;
     }
     result = recognized.results[0][0].transcript.toLowerCase();
+    console.log(result);
     if (!validations) {
-      return vocabulary.forEach(function(word) {
+      return grammar.forEach(function(word) {
         if (result.indexOf(word) !== -1) {
           return handler();
         }
       });
     } else {
       if (validations && validations()) {
-        return vocabulary.forEach(function(word) {
+        return grammar.forEach(function(word) {
           if (result.indexOf(word) !== -1) {
             return handler();
           }
@@ -63,14 +75,12 @@ Recognee = function(EGHV, language, continuous) {
       }
     }
   };
-  listen = function() {
+  handle = function() {
     return recognition.addEventListener("result", function(recognized) {
-      var event, result, results;
-      result = recognized.results[0][0].transcript.toLowerCase();
-      console.log(result);
+      var event, results;
       results = [];
       for (event in EGHV) {
-        results.push(handle(event, EGHV[event].grammar, EGHV[event].handler, recognized, EGHV[event].validation));
+        results.push(control(event, EGHV[event].grammar, EGHV[event].handler, recognized, EGHV[event].validation));
       }
       return results;
     });
@@ -80,7 +90,7 @@ Recognee = function(EGHV, language, continuous) {
     setLanguage(this);
     setGrammar();
     makeContinuous(this);
-    listen(this);
+    handle();
     return recognition.start();
   };
   return this;
@@ -186,10 +196,12 @@ API = {
     return document.querySelector('video');
   },
   play: function() {
-    return API.element().play();
+    API.element().play();
+    return console.log("play called");
   },
   stop: function() {
-    return API.element().pause();
+    API.element().pause();
+    return console.log("stop called");
   },
   louder: function() {
     if (API.element().volume + 0.1 <= 1) {
@@ -220,55 +232,33 @@ API = {
   }
 };
 
-var EGHV, recognizer;
+var recognizer;
 
-EGHV = {
-  play: {
-    grammar: ["игра", "ыгра", "игр", "игор"],
-    handler: API.play,
-    validation: function() {
-      return API.element().paused;
-    }
-  },
-  stop: {
-    grammar: ["100", "сто", "что", "топ", "кто"],
-    handler: API.stop,
-    validation: function() {
-      return !API.element().paused;
-    }
-  },
-  louder: {
-    grammar: ["громче", "гром"],
-    handler: API.louder,
-    validation: function() {
-      return API.element().volume < 1;
-    }
-  },
-  quiter: {
-    grammar: ["тише", "пиши", "тыщ"],
-    handler: API.quiter,
-    validation: function() {
-      return API.element().volume > 0;
-    }
-  },
-  toggleSound: {
-    grammar: ["звук"],
-    handler: API.toggleSound
-  },
-  slower: {
-    grammar: ['медленнее'],
-    handler: API.slower,
-    validation: function() {
-      return API.element().playbackRate >= 0.6;
-    }
-  },
-  faster: {
-    grammar: ['быстрее'],
-    hanlder: API.faster
-  }
-};
+recognizer = new Recognee();
 
-recognizer = new Recognee(EGHV);
+recognizer.listen('play', ["игра", "ыгра", "игр", "игор"], API.play, function() {
+  return API.element().paused;
+});
+
+recognizer.listen('stop', ["100", "сто", "что", "топ", "кто"], API.stop, function() {
+  return !API.element().paused;
+});
+
+recognizer.listen('louder', ["громче", "гром"], function() {
+  return API.element().volume < 1;
+});
+
+recognizer.listen('quiter', ["тише", "пиши", "тыщ"], API.quiter, function() {
+  return API.element().volume > 0;
+});
+
+recognizer.listen('toggleSound', ["звук"], API.toggleSound);
+
+recognizer.listen('slower', ["медленнее"], API.slower, function() {
+  return API.element().playbackRate >= 0.6;
+});
+
+recognizer.listen('faster', ["быстрее"], API.faster);
 
 recognizer.recognize();
 
