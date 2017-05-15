@@ -109,12 +109,17 @@ body::before {
 }
 video {
   border-radius: 7px;
-  width: 100%;
+  width: 60%;
   height: auto;
+}
+.settings {
+  display: block;
+  margin: auto !important;
 }
 #app {
   position: relative;
   min-height: 100%;
+  text-align: center;
 }
 .component {
   top: 50%;
@@ -123,10 +128,20 @@ video {
   position: absolute;
   transform: translate(-50%, -50%);
 }
+.player {
+  transform: none;
+  left: auto;
+  margin: auto;
+  top: auto;
+  position: static;
+  display: inline;
+}
 .component .component {
   top: auto;
   position: static;
   transform: none;
+  width: 80%;
+  margin: auto;
 }
 .ghost {
   border: 1px solid #fff;

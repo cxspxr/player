@@ -65,7 +65,7 @@
 	</template>
 
 	<template id="player-template">
-		<div class='component'>
+		<div class='component player'>
 			<h1 class='hero'>Enjoy!</h1>
 			<video controls >
 				<source v-bind:src="source" type='video/mp4'>
@@ -73,7 +73,7 @@
 				<source v-bind:src="source" type='video/webm'>
 				<p>Your user agent does not support the HTML5 Video!</p>
 			</video>
-			<button class="ghost ghost-button ghost-black" v-on:click='toggleSettings'>Settings</button>
+			<button class="ghost ghost-button ghost-black settings" v-on:click='toggleSettings'>Settings</button>
 			<controls accept='live' v-if='settings'></controls>
 		</div>
 	</template>
