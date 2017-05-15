@@ -265,7 +265,7 @@ welcome = Vue.component('welcome', {
     var _this;
     _this = this;
     passage.pass(['no-overflow', 'transition']);
-    return passage.pass(['body-color'], [], 100, function() {
+    return passage.pass(['body-color'], [], 8000, function() {
       return _this.$emit('finalize');
     });
   }
@@ -280,12 +280,12 @@ loading = Vue.component('loading', {
     _this = this;
     passage.clear();
     passage.pass(['loading', 'loading-background']);
-    passage.pass(['invisible'], [], 100, (function(_this) {
+    passage.pass(['invisible'], [], 5000, (function(_this) {
       return function() {
         return _this.$emit('finalize');
       };
     })(this));
-    return passage.pass([], ['loading-background', 'loading'], 200);
+    return passage.pass([], ['loading-background', 'loading'], 6000);
   }
 });
 
