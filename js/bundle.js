@@ -12,6 +12,9 @@ Recognee = function(language, continuous) {
   this.continuous = continuous;
   EGHV = {};
   recognition = null;
+  this.paused = function() {
+    return recognition.paused;
+  };
   setRecognition = function() {
     var SpeechRecognition, SpeechRecognitionEvent;
     SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -36,11 +39,12 @@ Recognee = function(language, continuous) {
     return recognition.grammars = speechList;
   };
   makeContinuous = function(_this) {
-    if (_this.continuous) {
-      return recognition.addEventListener("end", function() {
+    _this.continuous = true;
+    return recognition.addEventListener("end", function() {
+      if (_this.continuous) {
         return recognition.start();
-      });
-    }
+      }
+    });
   };
   this.listen = function(event, grammar, handler, validation) {
     if (validation == null) {
@@ -58,7 +62,6 @@ Recognee = function(language, continuous) {
       validations = void 0;
     }
     result = recognized.results[0][0].transcript.toLowerCase();
-    console.log(result);
     if (!validations) {
       return grammar.forEach(function(word) {
         if (result.indexOf(word) !== -1) {
@@ -78,6 +81,7 @@ Recognee = function(language, continuous) {
   handle = function() {
     return recognition.addEventListener("result", function(recognized) {
       var event, results;
+      console.log(recognized.results[0][0].transcript.toLowerCase());
       results = [];
       for (event in EGHV) {
         results.push(control(event, EGHV[event].grammar, EGHV[event].handler, recognized, EGHV[event].validation));
@@ -93,6 +97,12 @@ Recognee = function(language, continuous) {
     handle();
     return recognition.start();
   };
+  this.stop = (function(_this) {
+    return function() {
+      _this.continuous = false;
+      return recognition.stop();
+    };
+  })(this);
   return this;
 };
 
@@ -103,61 +113,296 @@ data = {
   source: null
 };
 
-var finalize;
+var vocabulary;
 
-finalize = {
-  methods: {
-    finalize: function() {
-      return null;
-    }
-  }
+vocabulary = {
+  play: ["играть"],
+  stop: ["стоп"],
+  louder: ["громче"],
+  quiter: ["тише"],
+  mute: ["звук"],
+  slower: ["медленнее"],
+  faster: ["быстрее"]
 };
+
+var lang, languages;
+
+lang = 'ru-RU';
+
+languages = {
+  "Afrikaans": 'af',
+  "Basque": 'eu',
+  "Bulgarian": 'bg',
+  "Catalan": 'ca',
+  "Arabic (Egypt)": 'ar-EG',
+  "Arabic (Jordan)": 'ar-JO',
+  "Arabic (Kuwait)": 'ar-KW',
+  "Arabic (Lebanon)": 'ar-LB',
+  "Arabic (Qatar)": 'ar-QA',
+  "Arabic (UAE)": 'ar-AE',
+  "Arabic (Morocco)": 'ar-MA',
+  "Arabic (Iraq)": 'ar-IQ',
+  "Arabic (Algeria)": 'ar-DZ',
+  "Arabic (Bahrain)": 'ar-BH',
+  "Arabic (Lybia)": 'ar-LY',
+  "Arabic (Oman)": 'ar-OM',
+  "Arabic (Saudi Arabia)": 'ar-SA',
+  "Arabic (Tunisia)": 'ar-TN',
+  "Arabic (Yemen)": 'ar-YE',
+  "Czech": 'cs',
+  "Dutch": 'nl-NL',
+  "English (Australia)": 'en-AU',
+  "English (Canada)": 'en-CA',
+  "English (India)": 'en-IN',
+  "English (New Zealand)": 'en-NZ',
+  "English (South Africa)": 'en-ZA',
+  "English (UK)": 'en-GB',
+  "English (US)": 'en-US',
+  "Finnish": 'fi',
+  "French": 'fr-FR',
+  "Galician": 'gl',
+  "German": 'de-DE',
+  "Hebrew": 'he',
+  "Hungarian": 'hu',
+  "Icelandic": 'is',
+  "Italian": 'it-IT',
+  "Indonesian": 'id',
+  "Japanese": 'ja',
+  "Korean": 'ko',
+  "Latin": 'la',
+  "Mandarin Chinese": 'zh-CN',
+  "Traditional Taiwan": 'zh-TW',
+  "Simplified China": 'zh-CN',
+  "Simplified Hong Kong": 'zh-HK',
+  "Yue Chinese (Traditional Hong Kong)": 'zh-yue',
+  "Malaysian": 'ms-MY',
+  "Norwegian": 'no-NO',
+  "Polish": 'pl',
+  "Pig Latin": 'xx-piglatin',
+  "Portuguese": 'pt-PT',
+  "Portuguese (Brasil)": 'pt-BR',
+  "Romanian": 'ro-RO',
+  "Russian": 'ru-RU',
+  "Serbian": 'sr-SP',
+  "Slovak": 'sk',
+  "Spanish (Argentina)": 'es-AR',
+  "Spanish (Bolivia)": 'es-BO',
+  "Spanish (Chile)": 'es-CL',
+  "Spanish (Colombia)": 'es-CO',
+  "Spanish (Costa Rica)": 'es-CR',
+  "Spanish (Domican Republic)": 'es-DO',
+  "Spanish (Ecuador)": 'es-EC',
+  "Spanish (El Salvador)": 'es-SV',
+  "Spanish (Guatemala)": 'es-GT',
+  "Spanish (Honduras)": 'es-HN',
+  "Spanish (Mexico)": 'es-MX',
+  "Spanish (Nicaragua)": 'es-NI',
+  "Spanish (Panama)": 'es-PA',
+  "Spanish (Paraguay)": 'es-PY',
+  "Spanish (Peru)": 'es-PE',
+  "Spanish (Puerto Rico)": 'es-PR',
+  "Spanish (Spain)": 'es-ES',
+  "Spanish (US)": ' es-US',
+  "Spanish (Uruguay)": 'es-UY',
+  "Spanish (Venezuela)": 'es-VE',
+  "Swedish": 'sv-SE',
+  "Turkish": 'tr',
+  "Zulu": 'zu'
+};
+
+
+
+var welcome;
+
+welcome = Vue.component('welcome', {
+  template: '#welcome-template',
+  mounted: function() {
+    var _this;
+    _this = this;
+    document.body.classList.add('no-overflow');
+    document.body.classList.add('transition');
+    return setTimeout(function() {
+      _this.$emit('finalize');
+      return document.body.classList.add('body-color');
+    }, 100);
+  }
+});
+
+var loading;
+
+loading = Vue.component('loading', {
+  template: '#loading-template',
+  mounted: function() {
+    var _this;
+    _this = this;
+    document.body.classList = '';
+    document.body.classList.add('invisible');
+    document.body.classList.remove('transition');
+    setTimeout(function() {
+      document.body.classList.add('loading');
+      document.body.classList.add('loading-background');
+      return document.body.classList.remove('invisible');
+    }, 400);
+    setTimeout(function() {
+      document.body.classList.add('invisible');
+      return _this.$emit('finalize');
+    }, 5000);
+    document.body.classList.remove('loading-background');
+    return document.body.classList.remove('loading');
+  }
+});
 
 var player;
 
 player = Vue.component('player', {
   template: '#player-template',
+  mounted: function() {
+    document.body.classList.add('transition');
+    setTimeout(function() {
+      return document.body.classList.add('cloud-bg');
+    }, 300);
+    return this.$emit('start');
+  },
   data: function() {
     return {
-      source: data.source
+      source: data.source,
+      settings: false
     };
   },
-  mixins: [finalize]
+  methods: {
+    toggleSettings: function() {
+      return this.settings = !this.settings;
+    }
+  }
 });
 
 var upload;
 
 upload = Vue.component('upload', {
   template: '#input-template',
+  mounted: function() {
+    document.body.classList = '';
+    return setTimeout(function() {
+      return document.body.classList.add('transparent');
+    }, 100);
+  },
   data: function() {
     return {
       type: data.type
     };
   },
   methods: {
+    checkExtension: function(upload, exts) {
+      var fileName;
+      fileName = document.getElementById(upload).value;
+      return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
+    },
     buildSource: function() {
-      if (data.type === 'link') {
-        data.source = this.$el.children[0].value;
-      } else {
-        data.source = URL.createObjectURL(this.$el.children[0].files[0]);
+      var extensions, input;
+      extensions = ['ogv', 'mp4', 'webm'];
+      if (!this.checkExtension('upload', extensions)) {
+        alert('Unsupported extension, try again. Supported extensions are: ' + extensions.join(" "));
+        document.getElementById('upload').value = "";
+        return false;
       }
+      input = document.querySelector('input');
+      if (data.type === 'link') {
+        data.source = input.value;
+      } else {
+        data.source = URL.createObjectURL(input.files[0]);
+      }
+      document.body.classList.add('invisible');
       return this.$emit('finalize');
     }
-  },
-  mixins: [finalize]
+  }
 });
 
 var src;
 
 src = Vue.component('src', {
   template: '#src-template',
+  mounted: function() {
+    var ghost;
+    ghost = document.querySelectorAll('button')[1];
+    document.body.classList = '';
+    return setTimeout(function() {
+      ghost.classList.add('moveButton');
+      document.body.classList.add('cinema');
+      document.body.classList.remove('invisible');
+      return document.body.classList.add('half-visible');
+    }, 100);
+  },
   methods: {
     setType: function(type) {
       data.type = type;
-      return this.$emit('finalize');
+      this.$emit('finalize');
+      document.body.classList.remove('half-visible');
+      return document.body.classList.add('invisible');
+    }
+  }
+});
+
+var controls;
+
+controls = Vue.component('controls', {
+  template: '#controls-template',
+  mounted: function() {
+    $('.selectpicker').selectpicker();
+    document.body.classList = '';
+    return setTimeout(function() {
+      document.body.classList.add('magic');
+      return document.body.classList.add('half-visible');
+    }, 100);
+  },
+  methods: {
+    checkValidity: function() {
+      var f;
+      f = document.getElementsByTagName('form')[0];
+      if (f.checkValidity()) {
+        return true;
+      } else {
+        alert("All fields are required!");
+      }
+      return false;
+    },
+    gather: function(event) {
+      var _this, ary, select;
+      event.preventDefault();
+      if (!this.checkValidity()) {
+        return false;
+      }
+      ary = this.$el.querySelectorAll('input');
+      _this = this;
+      Array.prototype.forEach.call(ary, function(e) {
+        return _this.inputs[e.name] = [e.value];
+      });
+      select = this.$el.querySelector('select');
+      window.lang = this.languages[select.value];
+      this.lang = this.languages[select.value];
+      if (this.accept !== 'live') {
+        return this.$emit('finalize');
+      } else {
+        return this.$parent.$emit('restart');
+      }
     }
   },
-  mixins: [finalize]
+  data: function() {
+    return {
+      inputs: vocabulary,
+      languages: languages,
+      lang: lang,
+      aliases: {
+        play: "Play",
+        stop: "Stop",
+        louder: "Louder",
+        quiter: "Quiter",
+        mute: "Mute / Unmute",
+        slower: "Slower",
+        faster: "Faster"
+      }
+    };
+  },
+  props: ['accept']
 });
 
 var app;
@@ -165,14 +410,17 @@ var app;
 app = new Vue({
   el: "#app",
   data: {
-    chain: [src, upload, player],
+    chain: [welcome, src, upload, controls, loading, player],
     level: 0,
     currentComponent: null
   },
   components: {
+    welcome: welcome,
     player: player,
     upload: upload,
-    src: src
+    src: src,
+    controls: controls,
+    loading: loading
   },
   methods: {
     start: function() {
@@ -183,6 +431,18 @@ app = new Vue({
       if (this.chain[this.level]) {
         return this.currentComponent = this.chain[this.level];
       }
+    },
+    startRecognition: function() {
+      recognizer.language = lang;
+      return recognizer.start(vocabulary);
+    },
+    restartRecognition: function() {
+      var _this;
+      recognizer.stop();
+      _this = this;
+      return setTimeout(function() {
+        return _this.startRecognition();
+      }, 200);
     }
   }
 });
@@ -196,12 +456,10 @@ API = {
     return document.querySelector('video');
   },
   play: function() {
-    API.element().play();
-    return console.log("play called");
+    return API.element().play();
   },
   stop: function() {
-    API.element().pause();
-    return console.log("stop called");
+    return API.element().pause();
   },
   louder: function() {
     if (API.element().volume + 0.1 <= 1) {
@@ -236,30 +494,23 @@ var recognizer;
 
 recognizer = new Recognee();
 
-recognizer.listen('play', ["игра", "ыгра", "игр", "игор"], API.play, function() {
-  return API.element().paused;
-});
-
-recognizer.listen('stop', ["100", "сто", "что", "топ", "кто"], API.stop, function() {
-  return !API.element().paused;
-});
-
-recognizer.listen('louder', ["громче", "гром"], function() {
-  return API.element().volume < 1;
-});
-
-recognizer.listen('quiter', ["тише", "пиши", "тыщ"], API.quiter, function() {
-  return API.element().volume > 0;
-});
-
-recognizer.listen('toggleSound', ["звук"], API.toggleSound);
-
-recognizer.listen('slower', ["медленнее"], API.slower, function() {
-  return API.element().playbackRate >= 0.6;
-});
-
-recognizer.listen('faster', ["быстрее"], API.faster);
-
-recognizer.recognize();
-
-
+recognizer.start = function(vocabulary) {
+  this.listen('play', vocabulary.play, API.play, function() {
+    return API.element().paused;
+  });
+  this.listen('stop', vocabulary.stop, API.stop, function() {
+    return !API.element().paused;
+  });
+  this.listen('louder', vocabulary.louder, API.louder, function() {
+    return API.element().volume < 1;
+  });
+  this.listen('quiter', vocabulary.quiter, API.quiter, function() {
+    return API.element().volume > 0;
+  });
+  this.listen('toggleSound', vocabulary.mute, API.toggleSound);
+  this.listen('slower', vocabulary.slower, API.slower, function() {
+    return API.element().playbackRate >= 0.6;
+  });
+  this.listen('faster', vocabulary.faster, API.faster);
+  return this.recognize();
+};

@@ -2,32 +2,107 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Player</title>
-	<script src='js/vendors/vue-dev.js'></script>
+	<title>Voice Player</title>
+
+	<link rel="stylesheet" href="styles/css/vendors/bootstrap.min.css">
+	<link rel="shortcut icon" href="img/favicon.png">
+	<script src='js/vendors/jquery.js'></script>
+	<script src='js/vendors/bootstrap.min.js'></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
+	<script src='js/vendors/vue.js'></script>
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.min.js'></script>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/175711/bas.js'></script>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/175711/TextGeometry.js'></script>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/175711/FontUtils.js'></script>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/175711/pnltri.min.js'></script>
+	<script src='js/vendors/infinity.js'></script>
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
+	<link rel="stylesheet" href="styles/css/main.css">
+
+
 </head>
-<body>
-	<div id="app">	
-		<component :is="currentComponent" v-on:finalize='next'></component>	
+<body class='invisible'>
+
+	<div id="preloader">
+		<img src="img/cinema.png" width="1" height="1" />
+		<img src="img/transparent.png" width="1" height="1" />
+		<img src="img/magic.jpg" width="1" height="1" />
+		<img src="img/octocat.svg" width='1' height='1' alt="">
+	</div>
+	<div id="app">
+		<component :is="currentComponent" v-on:finalize='next' v-on:restart='restartRecognition'
+			v-on:start='startRecognition'
+		></component>
 	</div>
 
+	<a href="https://caspermadara.github.io/devs"><img class = 'octocat' src="img/octocat.svg" alt=""></a>
+
 	<template id='input-template' >
-		<div>
-			<input type="file" v-on:change="buildSource" v-if='type == "file"'>
-			<input type="text" v-on:change="buildSource" v-else>
+		<div class='component'>
+			<h1 class='hero white'>Give a Video</h1>
+			<div class='buttons'>
+				<label for="upload" v-if='type == "file"' class='ghost ghost-button'>Choose a file
+					<input type="file" v-on:change="buildSource" class='file' name='file'  id='upload'>
+				</label>
+				<input type="text" class='ghost' v-on:change="buildSource" v-else id = 'upload'>
+			</div>
 		</div>
 	</template>
 
 	<template id="src-template">
-		<div class="src">
-			<button class="src--choice" v-on:click="setType('link')">Source Link</button>
-			<button class="src--choice" v-on:click="setType('file')">Upload file</button>
+		<div class="src component">
+			<h1 class="hero">Choose the Way</h1>
+			<div class='buttons'>
+				<button class="src--choice ghost ghost-button " v-on:click="setType('link')">Source Link</button>
+				<button class="src--choice ghost ghost-button" v-on:click="setType('file')">Upload File</button>
+			</div>
 		</div>
 	</template>
 
 	<template id="player-template">
-		<video controls v-bind:src="source"></video>
+		<div class='component'>
+			<h1 class='hero'>Enjoy!</h1>
+			<video controls >
+				<source v-bind:src="source" type='video/mp4'>
+				<source v-bind:src="source" type='video/ogg'>
+				<source v-bind:src="source" type='video/webm'>
+				<p>Your user agent does not support the HTML5 Video!</p>
+			</video>
+			<!-- <controls accept='live' v-if='settings'></controls>
+			<button v-on:click='toggleSettings'>Settings</button> -->
+		</div>
+	</template>
+
+	<template id="controls-template">
+		<ul class='component'>
+			<form>
+				<h1 class='hero white'>Set Up Controls</h1>
+				<div v-for="(value,key) in inputs" class='control-group'>
+					<span class='white control-alias'>{{aliases[key]}}</span>
+					<input type="text" class='ghost control':value = "value" :name = 'key' required>
+				</div>
+				<h2 class='hero white'>Pick the Language</h2>
+				<select id="" class='selectpicker' data-live-search='true' required>
+					<option v-for="(value, key) in languages" :value='key' :selected="value==lang">{{key}}</option>
+				</select>
+				<button v-on:click="gather($event)" class='ghost ghost-button'>Accept</button>
+			</form>
+		</ul>
+	</template>
+	<template id ='loading-template'>
+		<div></div>
+	</template>
+
+	<template id ="welcome-template">
+		<div id="three-container"></div>
 	</template>
 
 	<script src="js/bundle.js"></script>
+	<script src='js/welcome.js'></script>
 </body>
 </html>
