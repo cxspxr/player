@@ -29,6 +29,7 @@ gulp.task('stylus', function() {
 gulp.task("coffee", function() {
 	return gulp.src([
 		'./coffee/speech/recognition/Recognee.coffee',
+		'./coffee/ui/Passage.coffee',
 		'./coffee/init/data.coffee',
 		'./coffee/init/vocabulary.coffee',
 		'./coffee/init/language.coffee',

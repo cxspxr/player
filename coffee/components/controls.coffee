@@ -2,11 +2,8 @@ controls = Vue.component 'controls',
 	template: '#controls-template'
 	mounted: () ->
 		$('.selectpicker').selectpicker();
-		document.body.classList = ''
-		setTimeout () ->
-			document.body.classList.add 'magic'
-			document.body.classList.add 'half-visible'
-		, 100
+		passage.clear()
+		passage.pass ['magic', 'half-visible']
 	methods:
 		checkValidity: () ->
 			f = document.getElementsByTagName('form')[0]

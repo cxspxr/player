@@ -106,6 +106,51 @@ Recognee = function(language, continuous) {
   return this;
 };
 
+var Passage, passage;
+
+Passage = function(root) {
+  if (root == null) {
+    root = document.body;
+  }
+  this.clear = function() {
+    return root.classList = '';
+  };
+  this.pass = function(along, without, time, cb) {
+    if (without == null) {
+      without = [];
+    }
+    if (time == null) {
+      time = 0;
+    }
+    if (time !== 0) {
+      return setTimeout(function() {
+        along.forEach(function(className) {
+          return root.classList.add(className);
+        });
+        without.forEach(function(className) {
+          return root.classList.remove(className);
+        });
+        if (cb) {
+          return cb();
+        }
+      }, time);
+    } else {
+      along.forEach(function(className) {
+        return root.classList.add(className);
+      });
+      without.forEach(function(className) {
+        return root.classList.remove(className);
+      });
+      if (cb) {
+        return cb();
+      }
+    }
+  };
+  return this;
+};
+
+passage = new Passage;
+
 var data;
 
 data = {
@@ -219,12 +264,10 @@ welcome = Vue.component('welcome', {
   mounted: function() {
     var _this;
     _this = this;
-    document.body.classList.add('no-overflow');
-    document.body.classList.add('transition');
-    return setTimeout(function() {
-      _this.$emit('finalize');
-      return document.body.classList.add('body-color');
-    }, 8000);
+    passage.pass(['no-overflow', 'transition']);
+    return passage.pass(['body-color'], [], 8000, function() {
+      return _this.$emit('finalize');
+    });
   }
 });
 
@@ -235,20 +278,14 @@ loading = Vue.component('loading', {
   mounted: function() {
     var _this;
     _this = this;
-    document.body.classList = '';
-    document.body.classList.add('invisible');
-    document.body.classList.remove('transition');
-    setTimeout(function() {
-      document.body.classList.add('loading');
-      document.body.classList.add('loading-background');
-      return document.body.classList.remove('invisible');
-    }, 400);
-    setTimeout(function() {
-      document.body.classList.add('invisible');
-      return _this.$emit('finalize');
-    }, 5000);
-    document.body.classList.remove('loading-background');
-    return document.body.classList.remove('loading');
+    passage.clear();
+    passage.pass(['loading', 'loading-background']);
+    passage.pass(['invisible'], [], 5000, (function(_this) {
+      return function() {
+        return _this.$emit('finalize');
+      };
+    })(this));
+    return passage.pass([], ['loading-background', 'loading'], 6000);
   }
 });
 
@@ -257,11 +294,13 @@ var player;
 player = Vue.component('player', {
   template: '#player-template',
   mounted: function() {
-    document.body.classList.add('transition');
-    setTimeout(function() {
-      return document.body.classList.add('cloud-bg');
-    }, 300);
-    return this.$emit('start');
+    passage.clear();
+    passage.pass(['transition'], [], 0, (function(_this) {
+      return function() {
+        return _this.$emit('start');
+      };
+    })(this));
+    return passage.pass(['cloud-bg'], [], 300);
   },
   data: function() {
     return {
@@ -281,10 +320,8 @@ var upload;
 upload = Vue.component('upload', {
   template: '#input-template',
   mounted: function() {
-    document.body.classList = '';
-    return setTimeout(function() {
-      return document.body.classList.add('transparent');
-    }, 100);
+    passage.clear();
+    return passage.pass(['transparent'], [], 0);
   },
   data: function() {
     return {
@@ -311,8 +348,11 @@ upload = Vue.component('upload', {
       } else {
         data.source = URL.createObjectURL(input.files[0]);
       }
-      document.body.classList.add('invisible');
-      return this.$emit('finalize');
+      return passage.pass(['invisible'], [], 0, (function(_this) {
+        return function() {
+          return _this.$emit('finalize');
+        };
+      })(this));
     }
   }
 });
@@ -324,20 +364,21 @@ src = Vue.component('src', {
   mounted: function() {
     var ghost;
     ghost = document.querySelectorAll('button')[1];
-    document.body.classList = '';
-    return setTimeout(function() {
-      ghost.classList.add('moveButton');
-      document.body.classList.add('cinema');
-      document.body.classList.remove('invisible');
-      return document.body.classList.add('half-visible');
-    }, 100);
+    passage.clear();
+    return passage.pass(['cinema', 'half-visible'], ['invisible'], 100, (function(_this) {
+      return function() {
+        return ghost.classList.add('moveButton');
+      };
+    })(this));
   },
   methods: {
     setType: function(type) {
       data.type = type;
-      this.$emit('finalize');
-      document.body.classList.remove('half-visible');
-      return document.body.classList.add('invisible');
+      return passage.pass(['invisible'], ['half-visible'], 0, (function(_this) {
+        return function() {
+          return _this.$emit('finalize');
+        };
+      })(this));
     }
   }
 });
@@ -348,11 +389,8 @@ controls = Vue.component('controls', {
   template: '#controls-template',
   mounted: function() {
     $('.selectpicker').selectpicker();
-    document.body.classList = '';
-    return setTimeout(function() {
-      document.body.classList.add('magic');
-      return document.body.classList.add('half-visible');
-    }, 100);
+    passage.clear();
+    return passage.pass(['magic', 'half-visible']);
   },
   methods: {
     checkValidity: function() {
