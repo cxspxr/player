@@ -150,7 +150,7 @@ ul {
   display: inline;
 }
 .file {
-  display: none;
+  display: none !important;
 }
 video {
   border-radius: 7px;
