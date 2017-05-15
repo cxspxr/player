@@ -224,7 +224,7 @@ welcome = Vue.component('welcome', {
     return setTimeout(function() {
       _this.$emit('finalize');
       return document.body.classList.add('body-color');
-    }, 100);
+    }, 8000);
   }
 });
 

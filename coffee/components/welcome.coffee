@@ -7,4 +7,4 @@ welcome = Vue.component 'welcome',
 		setTimeout () ->
 			_this.$emit 'finalize'
 			document.body.classList.add 'body-color'
-		, 100
+		, 8000
