@@ -331,7 +331,7 @@ upload = Vue.component('upload', {
   methods: {
     checkExtension: function(upload, exts) {
       var fileName;
-      fileName = document.getElementById(upload).value;
+      fileName = document.getElementById(upload).value.trim();
       return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
     },
     buildSource: function() {
@@ -344,7 +344,7 @@ upload = Vue.component('upload', {
       }
       input = document.querySelector('input');
       if (data.type === 'link') {
-        data.source = input.value;
+        data.source = input.value.trim();
       } else {
         data.source = URL.createObjectURL(input.files[0]);
       }

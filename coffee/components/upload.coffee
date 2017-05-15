@@ -7,7 +7,7 @@ upload = Vue.component 'upload',
 		type: data.type
 	methods:
 		checkExtension: (upload, exts) ->
-			fileName = document.getElementById(upload).value
+			fileName = document.getElementById(upload).value.trim()
 			return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)
 
 		buildSource: () ->
@@ -20,7 +20,7 @@ upload = Vue.component 'upload',
 
 			input = document.querySelector 'input'
 			if data.type is 'link'
-				data.source = input.value
+				data.source = input.value.trim()
 			else
 				data.source = URL.createObjectURL input.files[0]
 
