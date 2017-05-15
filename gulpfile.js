@@ -22,6 +22,7 @@ gulp.task('reload-css', function() {
 
 gulp.task('stylus', function() {
 		return gulp.src('./styles/stylus/**/*.styl')
+					.pipe(concat('main.styl'))
 					.pipe(stylus())
 					.pipe(gulp.dest('./styles/css/'));
 });

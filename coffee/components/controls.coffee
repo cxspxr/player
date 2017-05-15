@@ -1,3 +1,4 @@
+# Controls component
 controls = Vue.component 'controls',
 	template: '#controls-template'
 	mounted: () ->
