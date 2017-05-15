@@ -3,4 +3,4 @@ welcome = Vue.component 'welcome',
 	mounted: () ->
 		_this = @
 		passage.pass ['no-overflow', 'transition']
-		passage.pass ['body-color'], [], 8000, () -> _this.$emit 'finalize'
+		passage.pass ['body-color'], [], 100, () -> _this.$emit 'finalize'

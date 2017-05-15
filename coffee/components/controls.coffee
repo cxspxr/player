@@ -2,8 +2,10 @@ controls = Vue.component 'controls',
 	template: '#controls-template'
 	mounted: () ->
 		$('.selectpicker').selectpicker();
-		passage.clear()
-		passage.pass ['magic', 'half-visible']
+		console.log @accept
+		if @accept isnt 'live'
+			passage.clear()
+			passage.pass ['magic', 'half-visible']
 	methods:
 		checkValidity: () ->
 			f = document.getElementsByTagName('form')[0]
@@ -22,7 +24,9 @@ controls = Vue.component 'controls',
 			ary = @$el.querySelectorAll 'input'
 			_this = @
 			Array.prototype.forEach.call ary, (e) ->
-				_this.inputs[e.name] = [e.value]
+				if e.classList.contains "control"
+					_this.inputs[e.name] = [e.value]
+
 
 			select = @$el.querySelector 'select'
 			window.lang = @languages[select.value]

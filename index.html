@@ -73,24 +73,24 @@
 				<source v-bind:src="source" type='video/webm'>
 				<p>Your user agent does not support the HTML5 Video!</p>
 			</video>
-			<!-- <controls accept='live' v-if='settings'></controls>
-			<button v-on:click='toggleSettings'>Settings</button> -->
+			<button class="ghost ghost-button ghost-black" v-on:click='toggleSettings'>Settings</button>
+			<controls accept='live' v-if='settings'></controls>
 		</div>
 	</template>
 
 	<template id="controls-template">
 		<ul class='component'>
 			<form>
-				<h1 class='hero white'>Set Up Controls</h1>
+				<h1 class= 'hero' :class='accept == "live" ? "" : "white"'>Set Up Controls</h1>
 				<div v-for="(value,key) in inputs" class='control-group'>
-					<span class='white control-alias'>{{aliases[key]}}</span>
-					<input type="text" class='ghost control':value = "value" :name = 'key' required>
+					<span class="control-alias" :class='accept == "live" ? "" : "white"'>{{aliases[key]}}</span>
+					<input type="text" class='ghost control' :class='accept == "live" ? "ghost-black":""' :value = "value" :name = 'key' required>
 				</div>
-				<h2 class='hero white'>Pick the Language</h2>
+				<h2 class = "hero" :class='accept == "live" ? "" : "white"'>Pick the Language</h2>
 				<select id="" class='selectpicker' data-live-search='true' required>
 					<option v-for="(value, key) in languages" :value='key' :selected="value==lang">{{key}}</option>
 				</select>
-				<button v-on:click="gather($event)" class='ghost ghost-button'>Accept</button>
+				<button v-on:click="gather($event)" class='accept ghost ghost-button' :class='accept == "live" ? "ghost-black":""' >Accept</button>
 			</form>
 		</ul>
 	</template>

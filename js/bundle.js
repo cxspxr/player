@@ -265,7 +265,7 @@ welcome = Vue.component('welcome', {
     var _this;
     _this = this;
     passage.pass(['no-overflow', 'transition']);
-    return passage.pass(['body-color'], [], 8000, function() {
+    return passage.pass(['body-color'], [], 100, function() {
       return _this.$emit('finalize');
     });
   }
@@ -280,12 +280,12 @@ loading = Vue.component('loading', {
     _this = this;
     passage.clear();
     passage.pass(['loading', 'loading-background']);
-    passage.pass(['invisible'], [], 5000, (function(_this) {
+    passage.pass(['invisible'], [], 100, (function(_this) {
       return function() {
         return _this.$emit('finalize');
       };
     })(this));
-    return passage.pass([], ['loading-background', 'loading'], 6000);
+    return passage.pass([], ['loading-background', 'loading'], 200);
   }
 });
 
@@ -389,8 +389,11 @@ controls = Vue.component('controls', {
   template: '#controls-template',
   mounted: function() {
     $('.selectpicker').selectpicker();
-    passage.clear();
-    return passage.pass(['magic', 'half-visible']);
+    console.log(this.accept);
+    if (this.accept !== 'live') {
+      passage.clear();
+      return passage.pass(['magic', 'half-visible']);
+    }
   },
   methods: {
     checkValidity: function() {
@@ -412,7 +415,9 @@ controls = Vue.component('controls', {
       ary = this.$el.querySelectorAll('input');
       _this = this;
       Array.prototype.forEach.call(ary, function(e) {
-        return _this.inputs[e.name] = [e.value];
+        if (e.classList.contains("control")) {
+          return _this.inputs[e.name] = [e.value];
+        }
       });
       select = this.$el.querySelector('select');
       window.lang = this.languages[select.value];
