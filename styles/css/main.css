@@ -141,6 +141,7 @@ video {
   position: static;
   transform: none;
   width: 80%;
+  padding: 50px;
   margin: auto;
 }
 .ghost {
