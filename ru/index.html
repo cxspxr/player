@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Voice Player</title>
+
+	<link rel="shortcut icon" href="img/favicon.png">
+	<!-- Vendors -->
+	<link rel="stylesheet" href="styles/css/vendors/bootstrap.min.css">
+	<script src='js/vendors/jquery.js'></script>
+	<script src='js/vendors/bootstrap.min.js'></script>
+	<link rel="stylesheet" href="styles/css/vendors/bs-select.min.css">
+	<script src="js/vendors/bs-select.min.js"></script>
+	<script src='js/vendors/vue.js'></script>
+	<script src='js/vendors/three.min.js'></script>
+	<script src='js/vendors/bas.js'></script>
+	<script src='js/vendors/TextGeometry.js'></script>
+	<script src='js/vendors/FontUtils.js'></script>
+	<script src='js/vendors/pnltri.min.js'></script>
+	<script src='js/vendors/infinity.js'></script>
+	<script src='js/vendors/tweenmax.min.js'></script>
+
+	<link rel="stylesheet" href="styles/css/main.css">
+</head>
+<body class='invisible'>
+
+	<div id="preloader">
+		<img src="img/cinema.png" width="1" height="1" />
+		<img src="img/transparent.png" width="1" height="1" />
+		<img src="img/magic.jpg" width="1" height="1" />
+		<img src="img/octocat.svg" width='1' height='1' alt="">
+	</div>
+	<div id="app">
+		<component :is="currentComponent" v-on:finalize='next' v-on:restart='restartRecognition'
+			v-on:start='startRecognition'
+		></component>
+	</div>
+
+	<a href="https://caspermadara.github.io/devs" target="_blank"><img class = 'octocat' src="img/octocat.svg" alt=""></a>
+
+	<template id='input-template' >
+		<div class='component'>
+			<h1 class='hero white'>Вставьте видео</h1>
+			<div class='buttons'>
+				<label for="upload" v-if='type == "file"' class='ghost ghost-button'>Выберите файл
+					<input type="file" v-on:change="buildSource" class='file' name='file'  id='upload'>
+				</label>
+				<input type="text" class='ghost' v-on:change="buildSource" v-else id = 'upload'>
+			</div>
+		</div>
+	</template>
+
+	<template id="src-template">
+		<div class="src component">
+			<h1 class="hero white">Выберите способ загрузки</h1>
+			<div class='buttons'>
+				<button class="src--choice ghost ghost-button " v-on:click="setType('link')">Ссылкой</button>
+				<button class="src--choice ghost ghost-button" v-on:click="setType('file')">Локальным файлом</button>
+			</div>
+		</div>
+	</template>
+
+	<template id="player-template">
+		<div class='component player'>
+			<h1 class='hero'>Наслаждайтесь</h1>
+			<video controls >
+				<source v-bind:src="source" type='video/mp4'>
+				<source v-bind:src="source" type='video/ogg'>
+				<source v-bind:src="source" type='video/webm'>
+				<p>Ваш браузер не поддерживает HTML5 Video!</p>
+			</video>
+			<button class="ghost ghost-button ghost-black settings" v-on:click='toggleSettings'>Настройки</button>
+			<controls accept='live' v-if='settings'></controls>
+		</div>
+	</template>
+
+	<template id="controls-template">
+		<ul class='component'>
+			<form>
+				<h1 class= 'hero' :class='accept == "live" ? "" : "white"'>Настройка слов-команд</h1>
+				<div v-for="(value,key) in inputs" class='control-group'>
+					<span class="control-alias" :class='accept == "live" ? "" : "white"'>{{aliases[key]}}</span>
+					<input type="text" class='ghost control' :class='accept == "live" ? "ghost-black":""' :value = "value" :name = 'key' required>
+				</div>
+				<h2 class = "hero" :class='accept == "live" ? "" : "white"'>Выберите язык</h2>
+				<select id="" class='selectpicker' data-live-search='true' required>
+					<option v-for="(value, key) in languages" :value='key' :selected="value==lang">{{key}}</option>
+				</select>
+				<button v-on:click="gather($event)" class='accept ghost ghost-button' :class='accept == "live" ? "ghost-black":""' >Принять</button>
+			</form>
+		</ul>
+	</template>
+	<template id ='loading-template'>
+		<div></div>
+	</template>
+
+	<template id ="welcome-template">
+		<div id="three-container"></div>
+	</template>
+
+	<script src="js/bundle.js"></script>
+	<script src='js/welcome.js'></script>
+</body>
+</html>

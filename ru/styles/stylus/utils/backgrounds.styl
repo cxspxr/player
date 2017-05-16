@@ -1,0 +1,38 @@
+body::before
+    content: ''
+    position: fixed
+    top:0
+    left: 0
+    right: 0
+    bottom: 0
+    background-size: cover
+    opacity: 1
+    transition: opacity 0.7s linear
+
+.loading-background
+    background-color: #2a2826
+
+.transparent::before
+    background-image: url('../../img/transparent.png')
+
+.cinema::before
+    background-image: url('../../img/cinema.png')
+
+.magic::before
+    background-image: url('../../img/magic.jpg')
+    -webkit-filter: grayscale(80%)
+    -o-filter: grayscale(80%)
+    filter: grayscale(80%)
+
+.loading::before
+    background-image: url('../../img/loading.gif')
+    background-size: 25%
+    background-position: center
+    background-repeat: no-repeat
+
+.body-color
+    background-color: rgba(187, 204, 204, 1)
+
+
+.cloud-bg
+    background-color: #ecf0f1
