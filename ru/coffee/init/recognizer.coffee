@@ -1,3 +1,7 @@
+###*
+    * Объект нашего собственного модуля обработки распознавания Recognee.
+    * @type {object}
+###
 recognizer = new Recognee()
 
 # Listening events
