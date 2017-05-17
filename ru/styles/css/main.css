@@ -28,32 +28,6 @@ ul {
   position: absolute;
   transform: translate(-50%, -50%);
 }
-@media screen {
-  div#preloader {
-    position: absolute;
-    left: -9999px;
-    top: -9999px;
-  }
-  div#preloader img {
-    display: block;
-  }
-}
-@media print {
-  div#preloader,
-  div#preloader img {
-    visibility: hidden;
-    display: none;
-  }
-}
-.white {
-  color: #fff;
-}
-.select {
-  font-size: 18px;
-}
-.hero {
-  text-align: center;
-}
 .settings {
   display: block;
   margin: auto !important;
@@ -205,4 +179,30 @@ body::before {
 }
 .transition {
   transition: all 2s ease-out;
+}
+@media screen {
+  div#preloader {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+  }
+  div#preloader img {
+    display: block;
+  }
+}
+@media print {
+  div#preloader,
+  div#preloader img {
+    visibility: hidden;
+    display: none;
+  }
+}
+.white {
+  color: #fff;
+}
+.select {
+  font-size: 18px;
+}
+.hero {
+  text-align: center;
 }

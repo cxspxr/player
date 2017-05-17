@@ -1,3 +1,7 @@
+###*
+	* Глобальный объект, определяющий методы взаимодействия с HTML-5 Video.
+	* @type {object}
+###
 API =
 	element: () -> return document.querySelector('video')
 	play: () ->

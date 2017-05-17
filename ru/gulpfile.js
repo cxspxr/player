@@ -34,7 +34,6 @@ gulp.task("coffee", function() {
 		'./coffee/init/data.coffee',
 		'./coffee/init/vocabulary.coffee',
 		'./coffee/init/language.coffee',
-		'./coffee/components/mixins.coffee',
 		'./coffee/components/welcome.coffee',
 		'./coffee/components/loading.coffee',
 		'./coffee/components/player.coffee',
@@ -44,7 +43,7 @@ gulp.task("coffee", function() {
 		'./coffee/init/app.coffee',
 		'./coffee/interface/player.coffee',
 		'./coffee/init/recognizer.coffee',
-		'./coffee/**/!(app|Recognee|recognizer|loading|upload|src|player|mixins|welcome|data|player|controls|vocabulary|language).coffee'],
+		'./coffee/**/!(app|Recognee|recognizer|loading|upload|src|player|welcome|data|player|controls|vocabulary|language).coffee'],
 		{ sourcemaps: true })
 	  .pipe(coffee({ bare: true }))
 	  .pipe(concat("bundle.js"))

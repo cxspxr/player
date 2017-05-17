@@ -1,13 +1,34 @@
-# Controls component
+###*
+	* Vue.js компонент, отвечающий за настройку слов-команд и языка распознавания речи.
+	* @namespace controls
+###
 controls = Vue.component 'controls',
+	###*
+		* HTML шаблон компонента.
+		* @type {string}
+		* @memberof controls
+	###
 	template: '#controls-template'
+	###*
+		* Функция, которая вызывается при создании Vue.js компонента.
+		* @type {function}
+		* @memberof controls
+	###
 	mounted: () ->
 		$('.selectpicker').selectpicker();
-		console.log @accept
 		if @accept isnt 'live'
 			passage.clear()
 			passage.pass ['magic', 'half-visible']
+	###*
+		* Методы компонента.
+		* @memberof controls
+		* @namespace controls.methods
+	###
 	methods:
+		###*
+			* Проверка на пустоту формы со словами.
+			* @memberof controls.methods
+		###
 		checkValidity: () ->
 			f = document.getElementsByTagName('form')[0]
 			if f.checkValidity()
@@ -16,6 +37,11 @@ controls = Vue.component 'controls',
 			    alert("Все поля обязательны к заполнению!")
 				return false
 
+		###*
+			* Функция сбора информации со всех полей формы.
+			* @memberof controls.methods
+			* @param {object} event - Обработчик события клика.
+		###
 		gather: (event) ->
 			event.preventDefault()
 
@@ -37,7 +63,11 @@ controls = Vue.component 'controls',
 				@$emit 'finalize'
 			else
 				@$parent.$emit 'restart'
-
+	###*
+		* Функция, служащая объектом свойств компонента Vue.js
+		* @memberof controls
+		* @returns {object} Объект с данными компонента (словарь, языки и т.д.)
+	###
 	data: () ->
 		inputs: vocabulary
 		languages: languages
@@ -50,4 +80,9 @@ controls = Vue.component 'controls',
 			mute: "Убрать / Вернуть звук"
 			slower: "Медленнее"
 			faster: "Быстрее"
+	###*
+		* Массив переданных свойств в сам компонент.
+		* @memberof controls
+		* @type {mixed}
+	###
 	props: ['accept']
